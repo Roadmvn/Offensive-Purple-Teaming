@@ -374,6 +374,3 @@ Parcours Intermédiaire → 06-Red-Team-Core → 07-Purple-Team-Detection
 
 Les contributions sont les bienvenues ! N'hésitez pas à proposer des améliorations.
 
-## Licence
-
-Ce projet est sous licence MIT - voir le fichier LICENSE pour plus de détails. 
