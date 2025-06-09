@@ -139,19 +139,29 @@ Ce manuel est conçu pour évoluer avec les technologies :
 - Maîtriser les enjeux spécifiques du Cloud Networking et du Wi-Fi dans le contexte actuel
 - Appliquer une méthodologie d'apprentissage progressive pour acquérir une expertise réseau complète
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[Réseaux traditionnels] --> B[Évolution technologique]
-    B --> C[Cloud Networking]
-    B --> D[Wi-Fi moderne]
-    C --> E[Architectures hybrides]
-    D --> E
-    E --> F[Expertise réseau complète]
-    
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style F fill:#fff3e0
+### Schéma de progression d'apprentissage
+```
+                    ╔═══════════════════╗
+                    ║   EXPERTISE       ║
+                    ║ RÉSEAU COMPLÈTE   ║
+                    ╚═══════════════════╝
+                           ▲
+                    ┌─────────────────┐
+                    │  ARCHITECTURES  │
+                    │    HYBRIDES     │
+                    └─────────────────┘
+                           ▲
+              ┌──────────────────┬──────────────────┐
+              │                  │                  │
+        ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+        │   CLOUD     │    │  ÉVOLUTION  │    │   WI-FI     │
+        │ NETWORKING  │    │TECHNOLOGIQUE│    │  MODERNE    │
+        └─────────────┘    └─────────────┘    └─────────────┘
+                                  ▲
+                        ┌─────────────────┐
+                        │    RÉSEAUX      │
+                        │ TRADITIONNELS   │
+                        └─────────────────┘
 ```
 
 ### Explications détaillées
@@ -247,16 +257,29 @@ iw dev wlan0 scan | grep -E "(SSID|signal|freq)"
 - **Stockage** : 20GB par VM
 - **Réseau** : Interface bridge ou NAT selon l'hyperviseur
 
-#### Topologie
-```mermaid
-graph LR
-    VM1[Ubuntu Server 1<br/>Gateway] --- SW[Switch virtuel<br/>192.168.100.0/24]
-    SW --- VM2[Ubuntu Server 2<br/>Client]
-    VM1 --- INT[Internet<br/>Simulation]
-    
-    style VM1 fill:#e3f2fd
-    style VM2 fill:#e8f5e8
-    style SW fill:#f3e5f5
+#### Topologie réseau
+```
+                 ┌─────────────────┐
+                 │    INTERNET     │
+                 │   (Simulation)  │
+                 └─────────┬───────┘
+                           │
+           ┌───────────────┴───────────────┐
+           │         VM1 - GATEWAY         │
+           │      Ubuntu Server 1          │
+           │    IP: 192.168.100.1/24       │
+           └───────────────┬───────────────┘
+                           │
+    ╔══════════════════════╪══════════════════════╗
+    ║                SWITCH VIRTUEL                ║
+    ║             192.168.100.0/24                 ║
+    ╚══════════════════════╪══════════════════════╝
+                           │
+           ┌───────────────┴───────────────┐
+           │         VM2 - CLIENT          │
+           │      Ubuntu Server 2          │
+           │    IP: 192.168.100.2/24       │
+           └───────────────────────────────┘
 ```
 
 #### Étapes pas-à-pas
@@ -372,33 +395,30 @@ ss -tuln
 
 10. **Architectures logicielles** : L'évolution moderne privilégie la flexibilité logicielle sur les équipements matériels figés.
 
-### Synthèse visuelle
+### Synthèse des technologies réseau modernes
 
-```mermaid
-graph TD
-    A[Réseaux traditionnels] --> B[Défis modernes]
-    B --> C[Cloud Networking]
-    B --> D[Wi-Fi avancé]
-    
-    C --> E[VPC & Peering]
-    C --> F[Security Groups]
-    C --> G[Load Balancers]
-    
-    D --> H[Wi-Fi 6/6E]
-    D --> I[WPA3]
-    D --> J[Contrôleurs centralisés]
-    
-    E --> K[Expertise réseau moderne]
-    F --> K
-    G --> K
-    H --> K
-    I --> K
-    J --> K
-    
-    style A fill:#ffebee
-    style C fill:#e3f2fd
-    style D fill:#e8f5e8
-    style K fill:#fff3e0
+```
+    RÉSEAUX TRADITIONNELS
+            │
+            ▼
+      DÉFIS MODERNES
+            │
+    ┌───────┴───────┐
+    │               │
+    ▼               ▼
+CLOUD NETWORKING   WI-FI AVANCÉ
+    │               │
+    ├─ VPC & Peering      ├─ Wi-Fi 6/6E
+    ├─ Security Groups    ├─ WPA3
+    └─ Load Balancers     └─ Contrôleurs centralisés
+    │               │
+    └───────┬───────┘
+            │
+            ▼
+    ╔═══════════════════════╗
+    ║ EXPERTISE RÉSEAU      ║
+    ║     MODERNE           ║
+    ╚═══════════════════════╝
 ```
 
 ### Points clés à retenir
@@ -419,27 +439,28 @@ graph TD
 - Maîtriser la conversion binaire et son importance dans l'adressage réseau
 - Appliquer la notation CIDR pour concevoir des plans d'adressage efficaces
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[Modèle OSI<br/>7 couches] --> B[Modèle TCP/IP<br/>4 couches]
-    B --> C[Adressage IP]
-    C --> D[Notation binaire]
-    D --> E[CIDR]
-    E --> F[Sous-réseaux]
-    F --> G[Plan d'adressage]
-    
-    A1[Application] --> A
-    A2[Présentation] --> A
-    A3[Session] --> A
-    A4[Transport] --> A
-    A5[Réseau] --> A
-    A6[Liaison] --> A
-    A7[Physique] --> A
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style E fill:#fff3e0
+### Modèles réseau et progression vers l'adressage moderne
+```
+    MODÈLE OSI (7 couches)        MODÈLE TCP/IP (4 couches)     PROGRESSION PRATIQUE
+    ═══════════════════          ═══════════════════════        ═══════════════════
+
+    ┌─────────────────┐          ┌─────────────────┐
+    │   APPLICATION   │          │   APPLICATION   │            ┌─────────────────┐
+    ├─────────────────┤          │                 │            │  ADRESSAGE IP   │
+    │  PRÉSENTATION   │    ────► │   (Couches      │     ────►  ├─────────────────┤
+    ├─────────────────┤          │    5-6-7)       │            │ NOTATION BINAIRE│
+    │    SESSION      │          │                 │            ├─────────────────┤
+    ├─────────────────┤          └─────────────────┘            │      CIDR       │
+    │   TRANSPORT     │          ┌─────────────────┐            ├─────────────────┤
+    ├─────────────────┤    ────► │   TRANSPORT     │            │  SOUS-RÉSEAUX   │
+    │    RÉSEAU       │          ├─────────────────┤            ├─────────────────┤
+    ├─────────────────┤    ────► │    INTERNET     │            │ PLAN D'ADRESSAGE│
+    │    LIAISON      │          ├─────────────────┤            └─────────────────┘
+    ├─────────────────┤    ────► │  ACCÈS RÉSEAU   │
+    │    PHYSIQUE     │          └─────────────────┘
+    └─────────────────┘
+
+       (Théorique)                 (Implémentation)              (Application)
 ```
 
 ### Explications détaillées
@@ -559,23 +580,29 @@ curl -I http://google.com  # Couche 7 (HTTP)
 - **Stockage** : 10GB par VM
 - **Réseau** : 3 réseaux virtuels pour simulation multicouche
 
-#### Topologie
-```mermaid
-graph TD
-    R1[Routeur 1<br/>10.1.1.1/24] --- N1[Réseau A<br/>10.1.1.0/24]
-    R1 --- N2[Réseau B<br/>10.1.2.0/24]
-    R2[Routeur 2<br/>10.1.2.1/24] --- N2
-    R2 --- N3[Réseau C<br/>10.1.3.0/24]
-    
-    N1 --- PC1[PC1<br/>10.1.1.10/24]
-    N2 --- PC2[PC2<br/>10.1.2.10/24]
-    N3 --- PC3[PC3<br/>10.1.3.10/24]
-    
-    style R1 fill:#e3f2fd
-    style R2 fill:#e3f2fd
-    style PC1 fill:#e8f5e8
-    style PC2 fill:#e8f5e8
-    style PC3 fill:#e8f5e8
+#### Topologie réseau multi-segments
+```
+    RÉSEAU A                    RÉSEAU B                    RÉSEAU C
+   10.1.1.0/24                 10.1.2.0/24                10.1.3.0/24
+   ═══════════                 ═══════════                ═══════════
+
+┌─────────────┐           ╔═══════════════════╗           ┌─────────────┐
+│     PC1     │           ║                   ║           │     PC3     │
+│ 10.1.1.10   │           ║    RÉSEAU B       ║           │ 10.1.3.10   │
+└──────┬──────┘           ║   10.1.2.0/24     ║           └──────┬──────┘
+       │                  ║                   ║                  │
+   ════╪════              ║  ┌─────────────┐  ║              ════╪════
+       │                  ║  │     PC2     │  ║                  │
+┌──────┴──────┐           ║  │ 10.1.2.10   │  ║           ┌──────┴──────┐
+│ ROUTEUR 1   │           ║  └──────┬──────┘  ║           │ ROUTEUR 2   │
+│10.1.1.1/24  │───────────╫─────────┼─────────╫───────────│10.1.3.1/24  │
+│10.1.2.1/24  │           ║         │         ║           │10.1.2.2/24  │
+└─────────────┘           ║     ════╪════     ║           └─────────────┘
+                          ║         │         ║
+                          ╚═════════╪═════════╝
+                                    │
+                               (Routeurs connectés
+                                via 10.1.2.0/24)
 ```
 
 #### Étapes pas-à-pas
@@ -717,34 +744,32 @@ netstat -rn
 
 10. **Sa rapidité** : UDP privilégie la vitesse en éliminant les mécanismes de fiabilité de TCP.
 
-### Synthèse visuelle
+### Synthèse des fondamentaux réseau
 
-```mermaid
-graph TD
-    A[Modèle OSI] --> B[7 Couches]
-    B --> C[Application]
-    B --> D[Transport]
-    B --> E[Réseau]
-    B --> F[Liaison]
+```
+    MODÈLE OSI              MODÈLE TCP/IP           ADRESSAGE IP
+    ══════════              ═════════════           ════════════
     
-    G[Modèle TCP/IP] --> H[4 Couches]
-    H --> I[Application]
-    H --> J[Transport]
-    H --> K[Internet]
-    H --> L[Accès réseau]
-    
-    M[Adressage IP] --> N[Notation CIDR]
-    N --> O[Calculs binaires]
-    O --> P[Sous-réseaux]
-    
-    D --> J
-    E --> K
-    F --> L
-    
-    style A fill:#e3f2fd
-    style G fill:#e8f5e8
-    style M fill:#fff3e0
-    style P fill:#ffebee
+    ┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+    │APPLICATION  │ ────────► APPLICATION │         │ NOTATION    │
+    ├─────────────┤         │ (5-6-7)     │         │ CIDR        │
+    │PRÉSENTATION │         └─────────────┘         ├─────────────┤
+    ├─────────────┤         ┌─────────────┐         │ CALCULS     │
+    │SESSION      │         │ TRANSPORT   │ ◄────── │ BINAIRES    │
+    ├─────────────┤         └─────────────┘         ├─────────────┤
+    │TRANSPORT    │ ────────► ┌─────────────┐         │ SOUS-       │
+    ├─────────────┤         │ INTERNET    │         │ RÉSEAUX     │
+    │RÉSEAU       │ ────────► └─────────────┘         └─────────────┘
+    ├─────────────┤         ┌─────────────┐              │
+    │LIAISON      │ ────────► ACCÈS RÉSEAU│              │
+    ├─────────────┤         │             │              │
+    │PHYSIQUE     │         └─────────────┘              │
+    └─────────────┘                                      │
+                                                         ▼
+                                                ┌─────────────────┐
+                                                │ PLANS D'ADRES-  │
+                                                │ SAGE OPTIMISÉS  │
+                                                └─────────────────┘
 ```
 
 ### Points clés à retenir
@@ -765,32 +790,44 @@ graph TD
 - Maîtriser les différentes topologies réseau et leurs cas d'usage
 - Appliquer les bonnes pratiques de câblage et d'architecture physique
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[Infrastructure réseau] --> B[Équipements actifs]
-    A --> C[Infrastructure passive]
-    
-    B --> D[Switches]
-    B --> E[Routeurs]
-    B --> F[Firewalls]
-    B --> G[Points d'accès Wi-Fi]
-    
-    C --> H[Câblage cuivre]
-    C --> I[Fibre optique]
-    C --> J[Baies de brassage]
-    C --> K[Panneaux de brassage]
-    
-    D --> L[Commutation L2]
-    E --> M[Routage L3]
-    F --> N[Sécurité périmétrique]
-    G --> O[Connectivité sans fil]
-    
-    style B fill:#e3f2fd
-    style C fill:#e8f5e8
-    style L fill:#fff3e0
-    style M fill:#fff3e0
-    style N fill:#ffebee
+### Architecture de l'infrastructure réseau
+```
+                        INFRASTRUCTURE RÉSEAU
+                        ═══════════════════════
+                                │
+                    ┌───────────┴───────────┐
+                    │                       │
+            ÉQUIPEMENTS ACTIFS        INFRASTRUCTURE PASSIVE
+            ═══════════════════        ═══════════════════════
+                    │                           │
+        ┌───────────┼───────────┐               │
+        │           │           │               │
+    ┌─────────┐ ┌─────────┐ ┌─────────┐  ┌─────────────┐
+    │SWITCHES │ │ROUTEURS │ │FIREWALLS│  │  CÂBLAGE    │
+    │         │ │         │ │         │  │             │
+    │ • L2    │ │ • L3    │ │ • L3-L7 │  │ • Cuivre    │
+    │ • VLANs │ │ • OSPF  │ │ • ACL   │  │ • Fibre     │
+    │ • STP   │ │ • BGP   │ │ • IPS   │  │ • Cat6A/8   │
+    └─────────┘ └─────────┘ └─────────┘  └─────────────┘
+        │           │           │               │
+        │           │           │        ┌─────────────┐
+        │           │           │        │INFRASTRUCTURE│
+        │           │           │        │             │
+        │           │           │        │ • Baies     │
+        │           │           │        │ • Panneaux  │
+        │           │           │        │ • Connecteur│
+        │           │           │        └─────────────┘
+        │           │           │
+        └───────────┼───────────┘
+                    │
+            ┌───────────────┐
+            │ CONNECTIVITÉ  │
+            │    WI-FI      │
+            │               │
+            │ • 802.11ax    │
+            │ • WPA3        │
+            │ • MIMO        │
+            └───────────────┘
 ```
 
 ### Explications détaillées
