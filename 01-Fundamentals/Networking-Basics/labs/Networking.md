@@ -993,21 +993,44 @@ iptables-save > /etc/iptables/rules.v4
 - **Stockage** : 15GB par VM
 - **Réseau** : 3 réseaux virtuels pour simulation complète
 
-#### Topologie
-```mermaid
-graph TD
-    INT[Internet<br/>Simulation] --- FW[Firewall<br/>192.168.1.1]
-    FW --- SW[Switch L2<br/>Bridge]
-    SW --- R1[Routeur interne<br/>192.168.1.10]
-    R1 --- LAN[Réseau LAN<br/>10.0.1.0/24]
-    LAN --- PC1[Client 1<br/>10.0.1.100]
-    LAN --- PC2[Client 2<br/>10.0.1.101]
-    
-    style FW fill:#ffebee
-    style SW fill:#e3f2fd
-    style R1 fill:#e8f5e8
-    style PC1 fill:#fff3e0
-    style PC2 fill:#fff3e0
+#### Topologie infrastructure complète
+```
+                 ┌─────────────────┐
+                 │    INTERNET     │
+                 │   (Simulation)  │
+                 │  203.0.113.0/24 │
+                 └─────────┬───────┘
+                           │
+              ╔════════════╪════════════╗
+              ║         FIREWALL        ║
+              ║      192.168.1.1        ║
+              ║    • Filtrage L3-L7     ║
+              ║    • NAT/PAT            ║
+              ╚════════════╪════════════╝
+                           │
+                    ┌──────┴──────┐
+                    │   SWITCH    │
+                    │   BRIDGE    │
+                    │  • Layer 2  │
+                    └──────┬──────┘
+                           │
+              ┌────────────┴────────────┐
+              │    ROUTEUR INTERNE      │
+              │     192.168.1.10        │
+              │    • Routage inter-VLAN │
+              └────────────┬────────────┘
+                           │
+            ═══════════════╪═══════════════
+                    RÉSEAU LAN
+                    10.0.1.0/24
+            ═══════════════╪═══════════════
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+        ┌─────────────┐           ┌─────────────┐
+        │   CLIENT 1  │           │   CLIENT 2  │
+        │ 10.0.1.100  │           │ 10.0.1.101  │
+        └─────────────┘           └─────────────┘
 ```
 
 #### Étapes pas-à-pas
@@ -1172,40 +1195,44 @@ iperf3 -c 10.0.1.100    # Depuis un client
 
 10. **Segmenter logiquement** : Les VLANs créent des domaines de broadcast séparés logiquement.
 
-### Synthèse visuelle
+### Synthèse de l'infrastructure réseau
 
-```mermaid
-graph TD
-    A[Infrastructure réseau] --> B[Couche physique]
-    A --> C[Couche logique]
-    
-    B --> D[Câblage cuivre]
-    B --> E[Fibre optique]
-    B --> F[Connecteurs]
-    B --> G[Baies de brassage]
-    
-    C --> H[Switches L2]
-    C --> I[Routeurs L3]
-    C --> J[Firewalls]
-    C --> K[Topologies]
-    
-    H --> L[Commutation MAC]
-    H --> M[VLANs]
-    H --> N[STP]
-    
-    I --> O[Routage IP]
-    I --> P[Protocoles dynamiques]
-    I --> Q[Tables de routage]
-    
-    J --> R[Filtrage stateful]
-    J --> S[Politiques sécurité]
-    J --> T[Inspection DPI]
-    
-    style B fill:#e8f5e8
-    style C fill:#e3f2fd
-    style H fill:#fff3e0
-    style I fill:#fff3e0
-    style J fill:#ffebee
+```
+         INFRASTRUCTURE RÉSEAU
+         ═══════════════════════
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+   COUCHE PHYSIQUE      COUCHE LOGIQUE
+   ═══════════════      ══════════════
+        │                     │
+    ┌───┼───┐              ┌──┼──┐
+    │   │   │              │  │  │
+┌─────┐ │ ┌─────┐      ┌─────┐ │ ┌─────┐
+│CÂBL.│ │ │CONN.│      │SWIT.│ │ │ROUT.│
+│     │ │ │     │      │     │ │ │     │
+│•Cu  │ │ │•RJ45│      │•L2  │ │ │•L3  │
+│•Fib.│ │ │•LC  │      │•MAC │ │ │•IP  │
+│•Cat6│ │ │•SC  │      │•VLAN│ │ │•OSPF│
+└─────┘ │ └─────┘      └─────┘ │ └─────┘
+        │                     │
+    ┌─────┐                ┌─────┐
+    │BAIES│                │FIRE.│
+    │     │                │     │
+    │•19" │                │•ACL │
+    │•42U │                │•DPI │
+    │•PDU │                │•IPS │
+    └─────┘                └─────┘
+        │                     │
+        └──────────┬──────────┘
+                   │
+            ┌─────────────┐
+            │ TOPOLOGIES  │
+            │             │
+            │ • Étoile    │
+            │ • Maillée   │
+            │ • Hybride   │
+            └─────────────┘
 ```
 
 ### Points clés à retenir
@@ -1227,39 +1254,42 @@ graph TD
 - Appliquer les bonnes pratiques de sécurité avec les security groups et les architectures Zero Trust
 - Concevoir des architectures de load balancing et CDN pour optimiser les performances globales
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[Cloud Networking] --> B[Infrastructure virtuelle]
-    A --> C[Connectivité]
-    A --> D[Sécurité]
-    A --> E[Performance]
-    
-    B --> F[VPC]
-    B --> G[Subnets]
-    B --> H[Route Tables]
-    
-    C --> I[VPC Peering]
-    C --> J[Transit Gateway]
-    C --> K[VPN/Interconnect]
-    
-    D --> L[Security Groups]
-    D --> M[NACLs]
-    D --> N[Zero Trust]
-    
-    E --> O[Load Balancers]
-    E --> P[CDN]
-    E --> Q[Edge Computing]
-    
-    F --> R[Multi-AZ]
-    I --> S[Cross-Region]
-    O --> T[Global Distribution]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
+### Architecture Cloud Networking moderne
+```
+                            CLOUD NETWORKING
+                            ═══════════════
+                                   │
+               ┌───────────────────┼───────────────────┐
+               │                   │                   │
+    INFRASTRUCTURE VIRTUELLE   CONNECTIVITÉ        SÉCURITÉ
+    ═══════════════════════   ═════════════        ════════
+               │                   │                   │
+        ┌──────┼──────┐     ┌──────┼──────┐     ┌──────┼──────┐
+        │      │      │     │      │      │     │      │      │
+    ┌─────┐ ┌─────┐ ┌─────┐ │  ┌─────┐ ┌─────┐ │  ┌─────┐ ┌─────┐
+    │ VPC │ │SUBN.│ │ROUT.│ │  │PEER.│ │ VPN │ │  │SEC. │ │NACL │
+    │     │ │     │ │     │ │  │     │ │     │ │  │GRP. │ │     │
+    │•AZ  │ │•Pub.│ │•IGW │ │  │•X-R │ │•DX  │ │  │•L4-7│ │•L3-4│
+    │•CIDR│ │•Prv.│ │•NAT │ │  │•TGW │ │•IPSc│ │  │•µSeg│ │•Stat│
+    └─────┘ └─────┘ └─────┘ │  └─────┘ └─────┘ │  └─────┘ └─────┘
+               │            │         │        │         │
+               │            │         │        │         │
+               │            └─────────┼────────┘         │
+               │                      │                  │
+               └──────────────────────┼──────────────────┘
+                                      │
+                              PERFORMANCE & DISTRIBUTION
+                              ═══════════════════════════
+                                      │
+                          ┌───────────┼───────────┐
+                          │           │           │
+                      ┌─────┐     ┌─────┐     ┌─────┐
+                      │ LB  │     │ CDN │     │EDGE │
+                      │     │     │     │     │     │
+                      │•ALB │     │•PoP │     │•5G  │
+                      │•NLB │     │•Cach│     │•IoT │
+                      │•GLB │     │•Edge│     │•AI  │
+                      └─────┘     └─────┘     └─────┘
 ```
 
 ### Explications détaillées
@@ -1552,32 +1582,43 @@ spec:
 - **Stockage** : 20GB par VM
 - **Réseau** : 4 réseaux virtuels pour simulation cloud complète
 
-#### Topologie
-```mermaid
-graph TD
-    INT[Internet<br/>Simulation] --- LB[Load Balancer<br/>10.0.1.10]
-    LB --- VPC1[VPC Production<br/>10.0.0.0/16]
-    LB --- VPC2[VPC Staging<br/>10.1.0.0/16]
-    
-    VPC1 --- PUB1[Subnet Public<br/>10.0.1.0/24]
-    VPC1 --- PRIV1[Subnet Private<br/>10.0.2.0/24]
-    
-    VPC2 --- PUB2[Subnet Public<br/>10.1.1.0/24]
-    VPC2 --- PRIV2[Subnet Private<br/>10.1.2.0/24]
-    
-    PUB1 --- WEB1[Web Server 1<br/>10.0.1.100]
-    PRIV1 --- DB1[Database 1<br/>10.0.2.100]
-    
-    PUB2 --- WEB2[Web Server 2<br/>10.1.1.100]
-    PRIV2 --- DB2[Database 2<br/>10.1.2.100]
-    
-    style LB fill:#e3f2fd
-    style VPC1 fill:#e8f5e8
-    style VPC2 fill:#fff3e0
-    style WEB1 fill:#ffebee
-    style WEB2 fill:#ffebee
-    style DB1 fill:#f3e5f5
-    style DB2 fill:#f3e5f5
+#### Topologie Cloud Networking multi-VPC
+```
+                        ┌─────────────────┐
+                        │    INTERNET     │
+                        │   (Simulation)  │
+                        └─────────┬───────┘
+                                  │
+                        ╔═════════╪═════════╗
+                        ║   LOAD BALANCER   ║
+                        ║    10.0.1.10      ║
+                        ║  • HAProxy/ALB    ║
+                        ╚═════════╪═════════╝
+                                  │
+                    ┌─────────────┼─────────────┐
+                    │                           │
+              VPC PRODUCTION                VPC STAGING
+              ══════════════                ═══════════
+              10.0.0.0/16                  10.1.0.0/16
+                    │                           │
+        ┌───────────┴───────────┐   ┌───────────┴───────────┐
+        │                       │   │                       │
+   SUBNET PUBLIC          SUBNET PRIVATE   SUBNET PUBLIC   SUBNET PRIVATE
+   ═════════════          ══════════════   ═════════════   ══════════════
+   10.0.1.0/24            10.0.2.0/24     10.1.1.0/24    10.1.2.0/24
+        │                       │               │               │
+  ┌─────────────┐         ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+  │ WEB SERVER1 │         │ DATABASE 1  │ │ WEB SERVER2 │ │ DATABASE 2  │
+  │ 10.0.1.100  │         │ 10.0.2.100  │ │ 10.1.1.100  │ │ 10.1.2.100  │
+  │             │         │             │ │             │ │             │
+  │ • nginx     │         │ • MySQL     │ │ • nginx     │ │ • PostgreSQL│
+  │ • Security  │         │ • Security  │ │ • Security  │ │ • Security  │
+  │   Groups    │         │   Groups    │ │   Groups    │ │   Groups    │
+  └─────────────┘         └─────────────┘ └─────────────┘ └─────────────┘
+       │                        │              │                │
+       └────────── VPC PEERING ──────────────────┘              │
+                                                                │
+                              └────── VPC PEERING ──────────────┘
 ```
 
 #### Étapes pas-à-pas
@@ -1819,45 +1860,44 @@ sudo tail -f /var/log/syslog | grep iptables
 
 10. **Les serveurs des utilisateurs** : L'edge computing déploie des ressources de calcul près des utilisateurs finaux pour réduire la latence.
 
-### Synthèse visuelle
+### Synthèse de l'évolution Cloud Networking
 
-```mermaid
-graph TD
-    A[Cloud Networking Evolution] --> B[Infrastructure Layer]
-    A --> C[Connectivity Layer]
-    A --> D[Security Layer]
-    A --> E[Application Layer]
-    
-    B --> F[VPC Design]
-    B --> G[Subnet Architecture]
-    B --> H[Route Management]
-    
-    C --> I[VPC Peering]
-    C --> J[Hybrid Connectivity]
-    C --> K[SD-WAN Integration]
-    
-    D --> L[Security Groups]
-    D --> M[Zero Trust]
-    D --> N[Micro-segmentation]
-    
-    E --> O[Load Balancing]
-    E --> P[CDN Distribution]
-    E --> Q[Service Mesh]
-    
-    F --> R[Multi-AZ Resilience]
-    I --> S[Global Connectivity]
-    L --> T[Granular Policies]
-    O --> U[Global Performance]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
-    style R fill:#e1f5fe
-    style S fill:#e1f5fe
-    style T fill:#e1f5fe
-    style U fill:#e1f5fe
+```
+               CLOUD NETWORKING EVOLUTION
+               ═════════════════════════════
+                          │
+            ┌─────────────┼─────────────┐
+            │             │             │
+    INFRASTRUCTURE   CONNECTIVITY   SECURITY
+         LAYER          LAYER        LAYER
+    ═════════════   ═════════════   ═════════
+            │             │             │
+    ┌───────┼───────┐     │     ┌───────┼───────┐
+    │       │       │     │     │       │       │
+┌─────┐ ┌─────┐ ┌─────┐   │  ┌─────┐ ┌─────┐ ┌─────┐
+│ VPC │ │SUBN.│ │ROUT.│   │  │SEC. │ │ZERO │ │MICRO│
+│     │ │     │ │     │   │  │GRP. │ │TRUST│ │ SEG │
+│•AZ  │ │•Pub.│ │•Tab.│   │  │•L4-7│ │•Cont│ │•Gran│
+│•CIDR│ │•Prv.│ │•IGW │   │  │•Stat│ │•Veri│ │•Poli│
+└─────┘ └─────┘ └─────┘   │  └─────┘ └─────┘ └─────┘
+                          │
+                   APPLICATION LAYER
+                   ═══════════════════
+                          │
+                ┌─────────┼─────────┐
+                │         │         │
+            ┌─────┐   ┌─────┐   ┌─────┐
+            │ LB  │   │ CDN │   │MESH │
+            │     │   │     │   │     │
+            │•ALB │   │•PoP │   │•µSvc│
+            │•NLB │   │•Edge│   │•Obs.│
+            │•GLB │   │•Cach│   │•mTLS│
+            └─────┘   └─────┘   └─────┘
+                  │         │         │
+                  └─────────┼─────────┘
+                            │
+                     GLOBAL PERFORMANCE
+                     ═══════════════════
 ```
 
 ### Points clés à retenir
@@ -1879,42 +1919,49 @@ graph TD
 - Concevoir des architectures de roaming seamless avec les standards 802.11k/r/v
 - Évaluer et déployer les différentes architectures de contrôleurs Wi-Fi selon les besoins d'entreprise
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[Wi-Fi Moderne] --> B[Standards 802.11]
-    A --> C[Sécurité WPA3]
-    A --> D[Roaming Seamless]
-    A --> E[Architectures Contrôleurs]
-    
-    B --> F[Wi-Fi 6 - 802.11ax]
-    B --> G[Wi-Fi 6E - 6GHz]
-    B --> H[Wi-Fi 7 - 802.11be]
-    
-    C --> I[SAE Authentication]
-    C --> J[192-bit Enterprise]
-    C --> K[PMF Obligatoire]
-    
-    D --> L[802.11k - RRM]
-    D --> M[802.11r - Fast Transition]
-    D --> N[802.11v - Management]
-    
-    E --> O[Controller-Based]
-    E --> P[Cloud-Managed]
-    E --> Q[Controller-less]
-    
-    F --> R[OFDMA + MU-MIMO]
-    G --> S[Spectre 6GHz]
-    I --> T[Protection Dictionnaire]
-    L --> U[Neighbor Reports]
-    O --> V[Contrôle Granulaire]
-    P --> W[WaaS - Zero Touch]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
+### Écosystème Wi-Fi moderne
+```
+                         WI-FI MODERNE
+                         ══════════════
+                               │
+               ┌───────────────┼───────────────┐
+               │               │               │
+        STANDARDS 802.11   SÉCURITÉ WPA3   ROAMING SEAMLESS
+        ════════════════   ══════════════   ════════════════
+               │               │                   │
+        ┌──────┼──────┐        │            ┌──────┼──────┐
+        │      │      │        │            │      │      │
+    ┌─────┐ ┌─────┐ ┌─────┐     │        ┌─────┐ ┌─────┐ ┌─────┐
+    │Wi-Fi│ │Wi-Fi│ │Wi-Fi│     │        │802. │ │802. │ │802. │
+    │  6  │ │ 6E  │ │  7  │     │        │11k │ │11r  │ │11v  │
+    │     │ │     │ │     │     │        │     │ │     │ │     │
+    │•OFDM│ │•6GHz│ │•MLO │     │        │•RRM │ │•FT  │ │•BSS │
+    │•MIMO│ │•160M│ │•4096│     │        │•Nbr │ │•PMK │ │•Mgmt│
+    └─────┘ └─────┘ └─────┘     │        └─────┘ └─────┘ └─────┘
+                                │
+                         ┌─────────────┐
+                         │ SÉCURITÉ    │
+                         │   WPA3      │
+                         │             │
+                         │ • SAE Auth  │
+                         │ • PMF Mand. │
+                         │ • 192-bit   │
+                         │ • Zero Dict │
+                         └─────────────┘
+                                │
+                    ARCHITECTURES CONTRÔLEURS
+                    ══════════════════════════
+                                │
+                    ┌───────────┼───────────┐
+                    │           │           │
+                ┌─────┐     ┌─────┐     ┌─────┐
+                │CTRL.│     │CLOUD│     │CTRL.│
+                │BASE │     │MGMT │     │LESS │
+                │     │     │     │     │     │
+                │•On- │     │•WaaS│     │•Dist│
+                │ Prem│     │•ZTP │     │•Auto│
+                │•Gran│     │•AI  │     │•Clus│
+                └─────┘     └─────┘     └─────┘
 ```
 
 ### Explications détaillées
@@ -2283,25 +2330,49 @@ if __name__ == "__main__":
 - **RAM** : 2GB par VM (4 VMs total)
 - **Stockage** : 15GB par VM
 
-#### Topologie
-```mermaid
-graph TD
-    CTRL[Contrôleur Wi-Fi<br/>192.168.1.10] --- SW[Switch Virtuel<br/>192.168.1.0/24]
-    SW --- AP1[Access Point 1<br/>192.168.1.11<br/>Canal 6 - 2.4GHz]
-    SW --- AP2[Access Point 2<br/>192.168.1.12<br/>Canal 36 - 5GHz]
-    SW --- AP3[Access Point 3<br/>192.168.1.13<br/>Canal 6E - 6GHz]
-    
-    AP1 -.->|SSID: Corp-Legacy<br/>WPA2| CLIENT1[Client Mobile]
-    AP2 -.->|SSID: Corp-Modern<br/>WPA3| CLIENT2[Client Laptop]
-    AP3 -.->|SSID: Corp-6E<br/>WPA3-6GHz| CLIENT3[Client Wi-Fi 6E]
-    
-    CTRL --> ROAM[Roaming Seamless<br/>802.11k/r/v]
-    
-    style CTRL fill:#e3f2fd
-    style AP1 fill:#fff3e0
-    style AP2 fill:#e8f5e8
-    style AP3 fill:#f3e5f5
-    style ROAM fill:#ffebee
+#### Topologie Wi-Fi multicouche
+```
+                    ╔═══════════════════════╗
+                    ║   CONTRÔLEUR WI-FI    ║
+                    ║     192.168.1.10      ║
+                    ║   • Orchestration     ║
+                    ║   • Roaming 802.11k/r/v ║
+                    ╚═══════════════════════╝
+                                │
+                    ╔═══════════╪═══════════╗
+                    ║     SWITCH VIRTUEL     ║
+                    ║    192.168.1.0/24     ║
+                    ╚═══════════╪═══════════╝
+                                │
+                ┌───────────────┼───────────────┐
+                │               │               │
+        ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+        │ ACCESS POINT 1│   │ ACCESS POINT 2│   │ ACCESS POINT 3│
+        │ 192.168.1.11  │   │ 192.168.1.12  │   │ 192.168.1.13  │
+        │               │   │               │   │               │
+        │ • Canal 6     │   │ • Canal 36    │   │ • Canal 6E    │
+        │ • 2.4 GHz     │   │ • 5 GHz       │   │ • 6 GHz       │
+        │ • Wi-Fi 5     │   │ • Wi-Fi 6     │   │ • Wi-Fi 6E    │
+        └───────┬───────┘   └───────┬───────┘   └───────┬───────┘
+                │                   │                   │
+                ▼                   ▼                   ▼
+           ╔═══════════╗       ╔═══════════╗       ╔═══════════╗
+           ║   SSID:   ║       ║   SSID:   ║       ║   SSID:   ║
+           ║Corp-Legacy║       ║Corp-Modern║       ║ Corp-6E   ║
+           ║   WPA2    ║       ║   WPA3    ║       ║WPA3-6GHz  ║
+           ╚═══════════╝       ╚═══════════╝       ╚═══════════╝
+                │                   │                   │
+                ▼                   ▼                   ▼
+        ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+        │ CLIENT MOBILE │   │ CLIENT LAPTOP │   │CLIENT Wi-Fi 6E│
+        │  (Smartphone) │   │  (Enterprise) │   │  (Latest Gen) │
+        └───────────────┘   └───────────────┘   └───────────────┘
+
+                    ROAMING SEAMLESS 802.11k/r/v
+                    ═══════════════════════════════
+                    • Radio Resource Management
+                    • Fast Transition (FT)
+                    • BSS Transition Management
 ```
 
 #### Étapes pas-à-pas
@@ -2887,45 +2958,50 @@ iperf3 -c 192.168.1.10 -t 60 --get-server-output
 
 10. **WPA3 obligatoire** : La réglementation impose WPA3 comme standard minimum sur la bande 6 GHz.
 
-### Synthèse visuelle
+### Synthèse de l'évolution Wi-Fi moderne
 
-```mermaid
-graph TD
-    A[Wi-Fi Moderne Evolution] --> B[Technology Stack]
-    A --> C[Security Evolution]
-    A --> D[Mobility Enhancement]
-    A --> E[Architecture Transformation]
-    
-    B --> F[802.11ax - Wi-Fi 6]
-    B --> G[802.11ax-6E - 6GHz]
-    B --> H[OFDMA + MU-MIMO]
-    
-    C --> I[WPA3-Personal SAE]
-    C --> J[WPA3-Enterprise 192-bit]
-    C --> K[PMF Mandatory]
-    
-    D --> L[802.11k RRM]
-    D --> M[802.11r Fast Transition]
-    D --> N[802.11v BSS Management]
-    
-    E --> O[Controller-Based Legacy]
-    E --> P[Cloud-Managed Modern]
-    E --> Q[WaaS Future]
-    
-    F --> R[Spectral Efficiency]
-    I --> S[Dictionary Attack Protection]
-    L --> T[Intelligent Roaming]
-    P --> U[Zero Touch Deployment]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
-    style R fill:#e1f5fe
-    style S fill:#e1f5fe
-    style T fill:#e1f5fe
-    style U fill:#e1f5fe
+```
+               WI-FI MODERNE EVOLUTION
+               ═══════════════════════
+                        │
+          ┌─────────────┼─────────────┐
+          │             │             │
+   TECHNOLOGY STACK  SECURITY      MOBILITY
+                    EVOLUTION    ENHANCEMENT
+   ═══════════════  ═════════    ═══════════
+          │             │             │
+   ┌──────┼──────┐      │      ┌──────┼──────┐
+   │      │      │      │      │      │      │
+┌─────┐ ┌─────┐ ┌─────┐ │   ┌─────┐ ┌─────┐ ┌─────┐
+│Wi-Fi│ │Wi-Fi│ │OFDM │ │   │802. │ │802. │ │802. │
+│  6  │ │ 6E  │ │ +   │ │   │11k │ │11r  │ │11v  │
+│     │ │6GHz │ │MIMO │ │   │     │ │     │ │     │
+│•Eff │ │•1200│ │•Bidi│ │   │•RRM │ │•FT  │ │•BSS │
+│•Dens│ │•MHz │ │•Mult│ │   │•Intl│ │•Fast│ │•Mgmt│
+└─────┘ └─────┘ └─────┘ │   └─────┘ └─────┘ └─────┘
+                        │
+                   ┌─────────────┐
+                   │  SECURITY   │
+                   │  EVOLUTION  │
+                   │             │
+                   │ • WPA3-SAE  │
+                   │ • 192-bit   │
+                   │ • PMF Mand. │
+                   │ • Dict Prot │
+                   └─────────────┘
+                        │
+              ARCHITECTURE TRANSFORMATION
+              ═══════════════════════════
+                        │
+              ┌─────────┼─────────┐
+              │         │         │
+          ┌─────┐   ┌─────┐   ┌─────┐
+          │CTRL │   │CLOUD│   │WaaS │
+          │BASE │   │MGMT │   │FUTR │
+          │     │   │     │   │     │
+          │•Leg.│   │•Mod.│   │•AI  │
+          │•Gran│   │•ZTP │   │•Auto│
+          └─────┘   └─────┘   └─────┘
 ```
 
 ### Points clés à retenir
@@ -2947,43 +3023,71 @@ graph TD
 - Configurer le trunking et le routage inter-VLAN dans des environnements complexes
 - Appliquer les bonnes pratiques de sécurité et de performance avec les VLAN
 
-### Schéma Mermaid
-```mermaid
-graph TD
-    A[VLAN Segmentation] --> B[Types de VLAN]
-    A --> C[Trunking]
-    A --> D[Routage Inter-VLAN]
-    A --> E[Sécurité VLAN]
-    
-    B --> F[Data VLAN]
-    B --> G[Voice VLAN]
-    B --> H[Management VLAN]
-    B --> I[Native VLAN]
-    
-    C --> J[802.1Q Tagging]
-    C --> K[Trunk Ports]
-    C --> L[Access Ports]
-    
-    D --> M[Router on a Stick]
-    D --> N[SVI - Switch Virtual Interface]
-    D --> O[Layer 3 Switch]
-    
-    E --> P[VLAN Hopping]
-    E --> Q[Private VLAN]
-    E --> R[VLAN ACL]
-    
-    F --> S[Utilisateurs]
-    G --> T[Téléphonie IP]
-    H --> U[Administration]
-    J --> V[Tag 802.1Q]
-    M --> W[Sous-interfaces]
-    P --> X[Double Tagging]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
+### Architecture VLAN et segmentation
+```
+                         VLAN SEGMENTATION
+                         ═════════════════
+                                │
+                ┌───────────────┼───────────────┐
+                │               │               │
+         TYPES DE VLAN     TRUNKING      ROUTAGE INTER-VLAN
+         ═════════════     ════════      ═══════════════════
+                │              │                    │
+        ┌───────┼───────┐      │            ┌───────┼───────┐
+        │       │       │      │            │       │       │
+    ┌─────┐ ┌─────┐ ┌─────┐    │        ┌─────┐ ┌─────┐ ┌─────┐
+    │DATA │ │VOICE│ │MGMT │    │        │ROAS │ │ SVI │ │ L3  │
+    │VLAN │ │VLAN │ │VLAN │    │        │     │ │     │ │SWIT │
+    │     │ │     │ │     │    │        │•Sub │ │•Int │ │     │
+    │•10  │ │•20  │ │•40  │    │        │•Int │ │•Virt│ │•HW  │
+    │•User│ │•VoIP│ │•Adm │    │        │•Ext │ │•Fast│ │•Dist│
+    └─────┘ └─────┘ └─────┘    │        └─────┘ └─────┘ └─────┘
+        │       │       │      │            │       │       │
+        │       │       │      │            └───────┼───────┘
+        │       │       │      │                    │
+        └───────┼───────┘      │              PERFORMANCE &
+                │              │              AVAILABILITY
+                │              │
+         ┌─────────────┐       │
+         │NATIVE VLAN  │       │
+         │             │       │
+         │ • VLAN 99   │       │
+         │ • Unused    │       │
+         │ • Security  │       │
+         └─────────────┘       │
+                │              │
+                │        ┌─────────────┐
+                │        │  TRUNKING   │
+                │        │             │
+                │        │ • 802.1Q    │
+                │        │ • Tag 4-oct │
+                │        │ • Trunk Port│
+                │        │ • Access Prt│
+                │        └─────────────┘
+                │              │
+                └──────────────┼──────────────┐
+                               │              │
+                        SÉCURITÉ VLAN         │
+                        ═════════════         │
+                               │              │
+                     ┌─────────┼─────────┐    │
+                     │         │         │    │
+                 ┌─────┐   ┌─────┐   ┌─────┐  │
+                 │VLAN │   │PRIV.│   │VLAN │  │
+                 │HOP. │   │VLAN │   │ ACL │  │
+                 │     │   │     │   │     │  │
+                 │•Dbl │   │•Isol│   │•VACL│  │
+                 │•Tag │   │•Comm│   │•Filt│  │
+                 └─────┘   └─────┘   └─────┘  │
+                                              │
+                                              │
+                                    ┌─────────────┐
+                                    │ QoS & PERF. │
+                                    │             │
+                                    │ • PCP 3-bit │
+                                    │ • Priority  │
+                                    │ • Traffic   │
+                                    └─────────────┘
 ```
 
 ### Explications détaillées
@@ -3542,23 +3646,51 @@ if __name__ == "__main__":
 - **Stockage** : 15GB par VM
 - **Réseau** : Support VLAN dans l'hyperviseur
 
-#### Topologie
-```mermaid
-graph TD
-    SW1[Switch Core<br/>192.168.1.10<br/>VLAN 10,20,30,40] --- SW2[Switch Access 1<br/>192.168.1.11<br/>Ports Access]
-    SW1 --- SW3[Switch Access 2<br/>192.168.1.12<br/>Ports Access]
-    
-    SW2 --- PC1[PC VLAN 10<br/>192.168.10.100]
-    SW2 --- PC2[PC VLAN 20<br/>192.168.20.100]
-    SW3 --- PC3[PC VLAN 30<br/>192.168.30.100]
-    SW3 --- SRV[Serveur VLAN 40<br/>192.168.40.100]
-    
-    SW1 -.->|Trunk 802.1Q| TRUNK[Liaison Trunk<br/>VLAN 10,20,30,40]
-    
-    style SW1 fill:#e3f2fd
-    style SW2 fill:#e8f5e8
-    style SW3 fill:#e8f5e8
-    style TRUNK fill:#fff3e0
+#### Topologie VLAN hiérarchique
+```
+                        ╔═══════════════════════╗
+                        ║      SWITCH CORE      ║
+                        ║     192.168.1.10      ║
+                        ║                       ║
+                        ║ • VLAN 10 - Users     ║
+                        ║ • VLAN 20 - Voice     ║
+                        ║ • VLAN 30 - Servers   ║
+                        ║ • VLAN 40 - MGMT      ║
+                        ║ • Routage Inter-VLAN  ║
+                        ╚═══════════════════════╝
+                                      │
+                           ═══════════════════════
+                           LIAISON TRUNK 802.1Q
+                           VLAN 10,20,30,40 Tagged
+                           ═══════════════════════
+                                      │
+                        ┌─────────────┴─────────────┐
+                        │                           │
+              ╔═══════════════════╗       ╔═══════════════════╗
+              ║  SWITCH ACCESS 1  ║       ║  SWITCH ACCESS 2  ║
+              ║   192.168.1.11    ║       ║   192.168.1.12    ║
+              ║                   ║       ║                   ║
+              ║ • Ports Access    ║       ║ • Ports Access    ║
+              ║ • VLAN Assignment ║       ║ • VLAN Assignment ║
+              ╚═══════════════════╝       ╚═══════════════════╝
+                        │                           │
+                ┌───────┴───────┐           ┌───────┴───────┐
+                │               │           │               │
+        ┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+        │   PC VLAN 10  │ │   PC VLAN 20  │ │   PC VLAN 30  │ │ SERVEUR VLAN  │
+        │192.168.10.100 │ │192.168.20.100 │ │192.168.30.100 │ │   40 - MGMT   │
+        │               │ │               │ │               │ │192.168.40.100 │
+        │ • Data Users  │ │ • VoIP Phones │ │ • Servers App │ │ • Management  │
+        │ • Access Port │ │ • Access Port │ │ • Access Port │ │ • Access Port │
+        └───────────────┘ └───────────────┘ └───────────────┘ └───────────────┘
+
+                    SEGMENTATION LOGIQUE PAR VLAN
+                    ══════════════════════════════
+                    • VLAN 10: 192.168.10.0/24 - Utilisateurs
+                    • VLAN 20: 192.168.20.0/24 - Téléphonie IP
+                    • VLAN 30: 192.168.30.0/24 - Serveurs
+                    • VLAN 40: 192.168.40.0/24 - Management
+                    • Routage Inter-VLAN via SVI sur Switch Core
 ```
 
 #### Étapes pas-à-pas
@@ -4235,45 +4367,64 @@ iperf3 -c 192.168.30.100  # Depuis client VLAN 10
 
 10. **L'agrégation de liens** : LACP (Link Aggregation Control Protocol) gère l'agrégation de multiples liaisons physiques.
 
-### Synthèse visuelle
+### Synthèse de la maîtrise VLAN
 
-```mermaid
-graph TD
-    A[VLAN Mastery] --> B[Logical Segmentation]
-    A --> C[Trunking Technology]
-    A --> D[Inter-VLAN Routing]
-    A --> E[Security Implementation]
-    
-    B --> F[Data VLAN]
-    B --> G[Voice VLAN]
-    B --> H[Management VLAN]
-    
-    C --> I[802.1Q Tagging]
-    C --> J[Native VLAN]
-    C --> K[Link Aggregation]
-    
-    D --> L[Router on Stick]
-    D --> M[SVI Routing]
-    D --> N[Layer 3 Switch]
-    
-    E --> O[VLAN Hopping Prevention]
-    E --> P[Private VLAN]
-    E --> Q[Security Monitoring]
-    
-    F --> R[User Isolation]
-    I --> S[Multi-VLAN Transport]
-    M --> T[Distributed Routing]
-    O --> U[Attack Mitigation]
-    
-    style A fill:#e3f2fd
-    style B fill:#e8f5e8
-    style C fill:#fff3e0
-    style D fill:#ffebee
-    style E fill:#f3e5f5
-    style R fill:#e1f5fe
-    style S fill:#e1f5fe
-    style T fill:#e1f5fe
-    style U fill:#e1f5fe
+```
+                        VLAN MASTERY
+                        ════════════
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+       LOGICAL          TRUNKING       INTER-VLAN
+     SEGMENTATION      TECHNOLOGY       ROUTING
+     ═══════════       ══════════       ═══════════
+              │              │              │
+        ┌─────┼─────┐         │        ┌─────┼─────┐
+        │     │     │         │        │     │     │
+    ┌─────┐ ┌─────┐ ┌─────┐   │    ┌─────┐ ┌─────┐ ┌─────┐
+    │DATA │ │VOICE│ │MGMT │   │    │ROAS │ │ SVI │ │ L3  │
+    │VLAN │ │VLAN │ │VLAN │   │    │     │ │ROUT.│ │SWIT │
+    │     │ │     │ │     │   │    │•Ext │ │     │ │     │
+    │•User│ │•QoS │ │•Adm │   │    │•Sub │ │•Int │ │•HW  │
+    │•Isol│ │•Prio│ │•Sec │   │    │•Lim │ │•Fast│ │•Dist│
+    └─────┘ └─────┘ └─────┘   │    └─────┘ └─────┘ └─────┘
+              │              │              │
+              │              │              │
+              │       ┌─────────────┐       │
+              │       │  TRUNKING   │       │
+              │       │             │       │
+              │       │ • 802.1Q    │       │
+              │       │ • Native    │       │
+              │       │ • LACP      │       │
+              │       │ • Multi-TR  │       │
+              │       └─────────────┘       │
+              │              │              │
+              └──────────────┼──────────────┘
+                             │
+                    SECURITY IMPLEMENTATION
+                    ═══════════════════════
+                             │
+                   ┌─────────┼─────────┐
+                   │         │         │
+               ┌─────┐   ┌─────┐   ┌─────┐
+               │VLAN │   │PRIV.│   │SEC. │
+               │HOP. │   │VLAN │   │MON. │
+               │PREV.│   │     │   │     │
+               │     │   │•Isol│   │•Aud.│
+               │•DTP │   │•Comm│   │•Log │
+               │•Natv│   │•Prom│   │•SIEM│
+               └─────┘   └─────┘   └─────┘
+                   │         │         │
+                   └─────────┼─────────┘
+                             │
+                    ┌─────────────────┐
+                    │ ATTACK MITIG.   │
+                    │ & USER ISOLATION│
+                    │                 │
+                    │ • Defense Depth │
+                    │ • Proactive Sec │
+                    │ • Multi-Layer   │
+                    └─────────────────┘
 ```
 
 ### Points clés à retenir
