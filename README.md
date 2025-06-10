@@ -47,10 +47,13 @@ Offensive-Purple-Teaming/
 │   ├── Networking-Basics/
 │   │   ├── README.md
 │   │   └── labs/
+│   │       └── Networking.md
 │   ├── Programming-Basics/
 │   │   ├── 01-Python/README.md
 │   │   ├── 02-Bash/README.md
 │   │   └── 03-PowerShell/README.md
+│   ├── Virtualisation-Basics/
+│   │   └── Virtualisation.md
 │   └── Offensive-Fundamentals/
 │       ├── 02-Reconnaissance/Reconnaissance.md
 │       ├── 03-Enumeration/Énumération.md
