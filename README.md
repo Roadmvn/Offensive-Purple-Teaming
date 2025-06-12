@@ -45,9 +45,8 @@ Offensive-Purple-Teaming/
 │   │   ├── README.md
 │   │   └── labs/
 │   ├── Networking-Basics/
-│   │   ├── README.md
-│   │   └── labs/
-│   │       └── Networking.md
+│   │   ├── Networking.md
+│   │   └── Focus_Cloud_Wi-Fi.md
 │   ├── Programming-Basics/
 │   │   ├── 01-Python/README.md
 │   │   ├── 02-Bash/README.md
@@ -341,7 +340,7 @@ Offensive-Purple-Teaming/
 ## 📊 Statistiques du Projet
 
 - **13 sections principales** couvrant tous les aspects de la cybersécurité
-- **160+ dossiers** organisés par thématique et niveau de difficulté
+- **159+ dossiers** organisés par thématique et niveau de difficulté
 - **220+ fichiers** de documentation, guides et laboratoires
 - **60+ laboratoires pratiques** pour l'entraînement
 - **9 templates de rapports** professionnels
